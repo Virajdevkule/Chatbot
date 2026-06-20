@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0E0F12" />
+<title>Nexus — AI Assistant</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body data-theme="dark">
+
+<!-- ===== Mobile overlay ===== -->
+<div class="overlay" id="overlay"></div>
+
+<div class="app">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <div class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 2L29 9V23L16 30L3 23V9L16 2Z" stroke="url(#g1)" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M16 2V16M16 16L29 9M16 16L3 9M16 16V30" stroke="url(#g1)" stroke-width="1.5" stroke-linejoin="round" opacity="0.5"/>
+            <defs>
+              <linearGradient id="g1" x1="3" y1="2" x2="29" y2="30" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#818CF8"/>
+                <stop offset="1" stop-color="#C084FC"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </span>
+        <span class="brand-name">Nexus</span>
+      </div>
+      <button class="icon-btn" id="collapseBtn" title="Collapse sidebar" aria-label="Collapse sidebar">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 4v16M4 8l-0 8M19 12H10M14 8l-3 4 3 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+    <button class="new-chat-btn" id="newChatBtn">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>New chat</span>
+      <kbd>⌘K</kbd>
+    </button>
+
+    <div class="sidebar-search">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input type="text" placeholder="Search conversations…" id="searchInput" />
+    </div>
+
+    <nav class="history" id="historyList" aria-label="Conversation history">
+      <!-- Populated by JS -->
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="storage-meter">
+        <div class="storage-row">
+          <span>Local storage</span>
+          <span id="storageUsed">—</span>
+        </div>
+        <div class="storage-bar"><div class="storage-fill" id="storageFill"></div></div>
+      </div>
+
+      <button class="profile-btn" id="profileBtn">
+        <span class="avatar">VG</span>
+        <span class="profile-meta">
+          <strong>Viraj Devkule</strong>
+          <small>Free plan</small>
+        </span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <div class="profile-menu" id="profileMenu">
+        <button data-action="settings">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 13.5a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V19a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H4a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h0a1.65 1.65 0 001-1.51V4a2 2 0 014 0v.09a1.65 1.65 0 001 1.51h0a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H20a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="1.8"/></svg>
+          Settings
+        </button>
+        <button data-action="usage">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 20V10M18 20V4M6 20v-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Usage &amp; storage
+        </button>
+        <button data-action="export">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Export all chats
+        </button>
+        <button data-action="import">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 21V9m0 0l-4 4m4-4l4 4M4 3h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Import chats
+        </button>
+        <div class="menu-sep"></div>
+        <button data-action="clear" class="danger">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m3 0l-1 14a1 1 0 01-1 1H6a1 1 0 01-1-1L4 6h16z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Clear all history
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main class="main">
+    <!-- Top bar -->
+    <header class="topbar">
+      <button class="icon-btn mobile-only" id="openSidebarBtn" aria-label="Open sidebar">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+
+      <div class="model-selector" id="modelSelector">
+        <button class="model-btn" id="modelBtn">
+          <span class="model-dot"></span>
+          <span id="modelName">Gemini 2.5 Flash</span>
+          <svg class="chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <div class="model-dropdown" id="modelDropdown">
+          <div class="model-dropdown-label">Models</div>
+
+          <button class="model-card active" data-model="gemini-2.5-flash" data-desc="Fast, balanced everyday model" data-tokens="128K context">
+            <div class="model-card-icon flash">⚡</div>
+            <div class="model-card-text">
+              <strong>Gemini 2.5 Flash</strong>
+              <small>Fast, balanced everyday model</small>
+            </div>
+            <span class="model-card-check">✓</span>
+          </button>
+
+          <button class="model-card" data-model="gemini-2.5-pro" data-desc="Deeper reasoning for complex tasks" data-tokens="1M context">
+            <div class="model-card-icon pro">✦</div>
+            <div class="model-card-text">
+              <strong>Gemini 2.5 Pro</strong>
+              <small>Deeper reasoning for complex tasks</small>
+            </div>
+            <span class="model-card-check">✓</span>
+          </button>
+
+          <button class="model-card" data-model="gemini-2.5-flash-lite" data-desc="Lightweight & ultra-fast" data-tokens="64K context">
+            <div class="model-card-icon lite">◌</div>
+            <div class="model-card-text">
+              <strong>Gemini 2.5 Flash-Lite</strong>
+              <small>Lightweight &amp; ultra-fast</small>
+            </div>
+            <span class="model-card-check">✓</span>
+          </button>
+
+          <div class="model-dropdown-footer">
+            <span>Token usage this session</span>
+            <strong id="tokenUsage">0 / 128K</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <button class="icon-btn" id="searchInChatBtn" title="Search in conversation" aria-label="Search in conversation">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+        <button class="icon-btn" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M19.07 4.93l-1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M4.93 4.93l1.41 1.41" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- In-chat search bar -->
+    <div class="chat-search-bar" id="chatSearchBar">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input type="text" placeholder="Search this conversation…" id="chatSearchInput" />
+      <span class="search-count" id="searchCount"></span>
+      <button class="icon-btn" id="closeChatSearch" aria-label="Close search">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <!-- Chat scroll area -->
+    <div class="chat-scroll" id="chatScroll">
+      <div class="chat-container" id="chatContainer">
+
+        <!-- Empty state / hero -->
+        <div class="empty-state" id="emptyState">
+          <div class="empty-glow"></div>
+          <div class="empty-icon">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 2L29 9V23L16 30L3 23V9L16 2Z" stroke="url(#g2)" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M16 2V16M16 16L29 9M16 16L3 9M16 16V30" stroke="url(#g2)" stroke-width="1.5" stroke-linejoin="round" opacity="0.5"/>
+              <defs>
+                <linearGradient id="g2" x1="3" y1="2" x2="29" y2="30" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#818CF8"/>
+                  <stop offset="1" stop-color="#C084FC"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <h1>How can I help you today? <span class="wave">👋</span></h1>
+          <p>Ask me anything — from code and writing to research and analysis. I'll stream the answer in real time. ✨</p>
+
+          <div class="suggestion-grid">
+            <button class="suggestion-card" data-prompt="Explain quantum computing in simple terms with an analogy">
+              <span class="suggestion-emoji">🧠</span>
+              <strong>Explain a concept</strong>
+              <small>Quantum computing, simply explained</small>
+            </button>
+            <button class="suggestion-card" data-prompt="Write a Python function to debounce API calls, with comments">
+              <span class="suggestion-emoji">💻</span>
+              <strong>Write code</strong>
+              <small>A debounce function in Python</small>
+            </button>
+            <button class="suggestion-card" data-prompt="Draft a friendly follow-up email after a job interview">
+              <span class="suggestion-emoji">✍️</span>
+              <strong>Draft a message</strong>
+              <small>Follow-up email after an interview</small>
+            </button>
+            <button class="suggestion-card" data-prompt="Compare the pros and cons of React vs Vue in a table">
+              <span class="suggestion-emoji">📊</span>
+              <strong>Compare options</strong>
+              <small>React vs Vue, side by side</small>
+            </button>
+          </div>
+        </div>
+
+        <!-- Messages render here -->
+        <div class="messages" id="messages"></div>
+
+      </div>
+    </div>
+
+    <!-- Scroll to bottom -->
+    <button class="scroll-bottom-btn" id="scrollBottomBtn" aria-label="Scroll to latest">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <!-- ================= COMPOSER ================= -->
+    <div class="composer-wrap">
+      <div class="composer">
+
+        <div class="attachments" id="attachments"></div>
+
+        <div class="drop-zone" id="dropZone">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0L7 9m5-5l5 5M5 20h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Drop files to attach</span>
+        </div>
+
+        <div class="composer-inner">
+          <button class="composer-icon-btn" id="attachBtn" title="Attach file" aria-label="Attach file">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M21.44 11.05l-9.19 9.19a5.5 5.5 0 01-7.78-7.78l9.19-9.19a3.5 3.5 0 014.95 4.95l-9.2 9.19a1.5 1.5 0 01-2.12-2.12l8.49-8.48" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <input type="file" id="fileInput" multiple hidden accept="image/*,.pdf,.docx,.txt" />
+
+          <textarea
+            id="promptInput"
+            placeholder="Message Nexus…"
+            rows="1"
+            aria-label="Message input"
+          ></textarea>
+
+          <button class="composer-icon-btn" id="micBtn" title="Voice input" aria-label="Voice input">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+
+          <button class="send-btn" id="sendBtn" disabled aria-label="Send message">
+            <svg class="send-icon" viewBox="0 0 24 24" fill="none"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg class="stop-icon" viewBox="0 0 24 24" fill="none"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>
+          </button>
+        </div>
+
+        <div class="composer-footer">
+          <span class="char-counter" id="charCounter">0 / 8000</span>
+          <span class="composer-hint">Nexus may produce inaccurate information · <kbd>Shift</kbd>+<kbd>Enter</kbd> for new line</span>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ================= SETTINGS MODAL ================= -->
+<div class="modal-backdrop" id="settingsBackdrop">
+  <div class="modal" id="settingsModal" role="dialog" aria-label="Settings">
+    <div class="modal-header">
+      <h2>Settings ⚙️</h2>
+      <button class="icon-btn" id="closeSettings" aria-label="Close settings">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-tabs">
+      <button class="modal-tab active" data-tab="appearance">Appearance</button>
+      <button class="modal-tab" data-tab="chat">Chat</button>
+      <button class="modal-tab" data-tab="data">Data</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Appearance -->
+      <section class="modal-pane active" data-pane="appearance">
+        <div class="setting-row">
+          <div>
+            <strong>Theme</strong>
+            <small>Choose how Nexus looks</small>
+          </div>
+          <div class="segmented" id="themeSegmented">
+            <button data-theme="light">☀️ Light</button>
+            <button data-theme="dark" class="active">🌙 Dark</button>
+            <button data-theme="system">🖥️ System</button>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div>
+            <strong>Font size</strong>
+            <small>Adjust message text size</small>
+          </div>
+          <div class="segmented" id="fontSizeSegmented">
+            <button data-size="sm">Small</button>
+            <button data-size="md" class="active">Medium</button>
+            <button data-size="lg">Large</button>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div>
+            <strong>Chat width</strong>
+            <small>Comfortable reading width</small>
+          </div>
+          <div class="segmented" id="chatWidthSegmented">
+            <button data-width="narrow">Narrow</button>
+            <button data-width="default" class="active">Default</button>
+            <button data-width="wide">Wide</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Chat -->
+      <section class="modal-pane" data-pane="chat">
+        <div class="setting-row">
+          <div>
+            <strong>Conversation memory</strong>
+            <small>Remember context from earlier in this chat</small>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="memoryToggle" checked />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting-row">
+          <div>
+            <strong>Auto-save chats</strong>
+            <small>Save conversations to local storage</small>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="autosaveToggle" checked />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting-row">
+          <div>
+            <strong>Keyboard shortcuts</strong>
+            <small>⌘K new chat · ⌘/ focus input · Esc stop generation</small>
+          </div>
+        </div>
+      </section>
+
+      <!-- Data -->
+      <section class="modal-pane" data-pane="data">
+        <div class="setting-row">
+          <div>
+            <strong>Export all chats</strong>
+            <small>Download your conversations as JSON</small>
+          </div>
+          <button class="btn-secondary" id="exportBtn">Export</button>
+        </div>
+        <div class="setting-row">
+          <div>
+            <strong>Import chats</strong>
+            <small>Restore conversations from a JSON file</small>
+          </div>
+          <button class="btn-secondary" id="importBtn">Import</button>
+        </div>
+        <div class="setting-row danger-row">
+          <div>
+            <strong>Clear all history</strong>
+            <small>This cannot be undone</small>
+          </div>
+          <button class="btn-danger" id="clearAllBtn">Clear</button>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- ================= IMAGE LIGHTBOX ================= -->
+<div class="lightbox" id="lightbox">
+  <img id="lightboxImg" src="" alt="Attachment preview" />
+</div>
+
+<!-- toast root -->
+<div class="toast-root" id="toastRoot"></div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="script.js"></script>
+</body>
+</html>
